@@ -8,40 +8,89 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class drivetrain {
 
     private LinearOpMode opMode;
-    private Gyro gyro;
+    private gyro Gyro;
 
     private DcMotor frontLeft;
-    private DcMotor middleLeft;
     private DcMotor backLeft;
     private DcMotor frontRight;
-    private DcMotor middleRight;
     private DcMotor backRight;
 
     public drivetrain(LinearOpMode opMode) {
         this.opMode = opMode;
 
-        gyro = new Gyro(opMode, true);
+        Gyro = new gyro(opMode, true);
 
         frontLeft = opMode.hardwareMap.dcMotor.get("frontLeft");
-        middleLeft = opMode.hardwareMap.dcMotor.get("middleLeft");
         backLeft = opMode.hardwareMap.dcMotor.get("backLeft");
         frontRight = opMode.hardwareMap.dcMotor.get("frontRight");
-        middleRight = opMode.hardwareMap.dcMotor.get("middleRight");
         backRight = opMode.hardwareMap.dcMotor.get("backRight");
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        middleLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        middleRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        middleLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        middleRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
     }
+
+    public void resetEncoders() {
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        opMode.idle();
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        opMode.idle();
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        opMode.idle();
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        opMode.idle();
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        opMode.idle();
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        opMode.idle();
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        opMode.idle();
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        opMode.idle();
+
+    }
+
+    public void setPower(double power) {
+        frontLeft.setPower(power);
+        backLeft.setPower(power);
+        frontRight.setPower(power);
+        backRight.setPower(power);
+
+    }
+
+    public void stopMotors() {
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+
+    }
+
+    public void turn(double power, boolean right) {
+        if (right) {
+            frontLeft.setPower(power);
+            backLeft.setPower(-power);
+            frontRight.setPower(power);
+            backRight.setPower(-power);
+
+        } else {
+            frontLeft.setPower(-power);
+            backLeft.setPower(power);
+            frontRight.setPower(-power);
+            backRight.setPower(power);
+
+        }
+
+    }
+
+    
 
 }
