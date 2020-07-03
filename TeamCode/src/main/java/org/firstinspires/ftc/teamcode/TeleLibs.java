@@ -8,10 +8,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public abstract class TeleLibs extends OpMode {
 
     private DcMotor frontLeft;
-    private DcMotor middleLeft;
     private DcMotor frontRight;
     private DcMotor backLeft;
-    private DcMotor middleRight;
     private DcMotor backRight;
 
     private DcMotor intakeL;
@@ -20,8 +18,6 @@ public abstract class TeleLibs extends OpMode {
     @Override
     public void init() {
         // MOTOR INITIALZATION
-        frontLeft = hardwareMap.dcMotor.get("frontLeft");
-        middleLeft = hardwareMap.dcMotor.get("middleLeft");
         frontLeft = hardwareMap.dcMotor.get("frontLeft");
         backLeft = hardwareMap.dcMotor.get("backLeft");
         frontRight = hardwareMap.dcMotor.get("frontRight");
