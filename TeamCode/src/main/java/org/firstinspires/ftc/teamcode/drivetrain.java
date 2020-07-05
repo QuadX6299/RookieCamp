@@ -91,6 +91,31 @@ public class drivetrain {
 
     }
 
+    public double getAvgEncoder(){
+
+        double avgAdd = Math.abs(frontLeft.getCurrentPosition()) + Math.abs(backLeft.getCurrentPosition()) + Math.abs(frontRight.getCurrentPosition()) + Math.abs(backRight.getCurrentPosition());
+        double div = 4.0;
+        if(frontLeft.getCurrentPosition() == 0;){
+            div --;
+        }
+        if(backLeft.getCurrentPosition() == 0;){
+            div --;
+        }
+        if(frontRight.getCurrentPosition() == 0;){
+            div --;
+        }
+        if(backRight.getCurrentPosition() == 0;){
+            div --;
+        }
+        if(div == 0;){
+            return 0;
+        } else{
+            return avgAdd / div;
+        }
+
+    }
+
+    
     
 
 }
