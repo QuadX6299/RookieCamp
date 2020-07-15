@@ -58,11 +58,11 @@ public class drivetrain {
 
     }
 
-    public void setPower(double power) {
-        frontLeft.setPower(power);
-        backLeft.setPower(power);
-        frontRight.setPower(power);
-        backRight.setPower(power);
+    public void setPower(double LPower, doubel RPower) {
+        frontLeft.setPower(LPower);
+        backLeft.setPower(LPower);
+        frontRight.setPower(RPower);
+        backRight.setPower(RPower);
 
     }
 
@@ -115,7 +115,51 @@ public class drivetrain {
 
     }
 
-    
-    
+    public void turn(double kP, double kI, double kD, double angle, boolean right, double timeout){
+        ElapsedTime time = new ElapsedTime();
+
+        time.startTime();
+
+        double initialAngle = gyro.getGyroYaw();
+
+        double error;
+        double power;
+
+        double proportional;
+        double integral = 0;
+        double derivative;
+
+        double previousTime;
+        double previousError = gyro.trueDiff(angle);
+
+        while (Math.abs(gyro.getGyroYaw() - (angle + initialAngle)) > 1 && time.seconds() < timeout) {
+            error = gyro.trueDiff(angle);
+
+            previousTime = time.seconds();
+
+            proportional = error * kP;
+            integral += error * (time.seconds() - previousTime) * kI;
+            derivative = ((error - previousError) / (time.seconds() - previousTime)) * kD;
+
+            power = proportional + integral + derivative;
+
+            turn(power, right);
+
+            opMode.telemetry.addData("power", power);
+            opMode.telemetry.addData("error", error);
+            opMode.telemetry.addData("proportional", proportional);
+            opMode.telemetry.addData("integral", integral);
+            opMode.telemetry.addData("derivative", derivative);
+
+            previousError = error;
+
+            opMode.idle();
+
+
+        }
+
+        stopMotors();
+
+    }
 
 }
