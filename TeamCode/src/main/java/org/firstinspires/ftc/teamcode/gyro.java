@@ -63,4 +63,16 @@ public class gyro {
 
     }
 
+    public double trueDiff(double turnDes) {
+        double currAngle = getGyroYaw();
+        if ((currAngle >= 0 && turnDes >= 0) || (currAngle <= 0 && turnDes <= 0)){
+            return turnDes - currAngle;
+        } else if(Math.abs(destTurn - currAng) <= 180) {
+            return destTurn - currAng;
+        } else if(destTurn > currAng) {
+            return -(360 - (destTurn - currAng));
+        } else {
+            return 360 - (currAng - destTurn);
+        }
+
 }
