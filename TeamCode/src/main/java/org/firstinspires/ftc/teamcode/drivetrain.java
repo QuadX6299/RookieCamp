@@ -58,7 +58,7 @@ public class drivetrain {
 
     }
 
-    public void setPower(double LPower, doubel RPower) {
+    public void setPower(double LPower, double RPower) {
         frontLeft.setPower(LPower);
         backLeft.setPower(LPower);
         frontRight.setPower(RPower);

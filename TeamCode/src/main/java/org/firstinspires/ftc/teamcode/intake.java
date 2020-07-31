@@ -20,6 +20,12 @@ public class Intake{
 
     }
 
+    public void setPower(double Power) {
+        intakeFL.setPower(-Power);
+        intakeBR.setPower(Power);
+
+    }
+
     public void intake(double timeout){
         ElapsedTime time = new ElapsedTime();
 

@@ -12,8 +12,8 @@ public abstract class TeleLibs extends OpMode {
     private DcMotor frontRight;
     private DcMotor backRight;
 
-    private DcMotor intakeL;
-    private DcMotor intakeR;
+    private DcMotor intakeFL;
+    private DcMotor intakeBR;
 
     @Override
     public void init() {
@@ -23,8 +23,8 @@ public abstract class TeleLibs extends OpMode {
         frontRight = hardwareMap.dcMotor.get("frontRight");
         backRight = hardwareMap.dcMotor.get("backRight");
 
-        intakeL = hardwareMap.dcMotor.get("intakeL");
-        intakeR = hardwareMap.dcMotor.get("intakeR");
+        intakeFL = hardwareMap.dcMotor.get("intakeFL");
+        intakeBR = hardwareMap.dcMotor.get("intakeBR");
         
     // ________________________________________________________________________________________________
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -32,8 +32,8 @@ public abstract class TeleLibs extends OpMode {
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        intakeL.setDirection(DcMotorSimple.Direction.FORWARD);
-        intakeR.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeFL.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeBR.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
 
@@ -68,6 +68,30 @@ public abstract class TeleLibs extends OpMode {
 
         }
 
+    }
+
+    // =======================================  INTAKE  ============================================
+
+    public void intakeSlides() {
+        double left_trigger = gamepad1.left_trigger;
+        double right_trigger = gamepad1.right_trigger;
+
+        if (left_trigger > 0.05) {
+            //the right intake slide is set to reverse, may have to change that
+            intakeFL.setPower(-left_trigger);
+            intakeBR.setPower(-left_trigger);
+
+        }
+        else if (right_trigger > 0.05) {
+            intakeFL.setPower(right_trigger);
+            intakeBR.setPower(right_trigger);
+
+        }
+        else {
+            intakeFL.setPower(0);
+            intakeBR.setPower(0);
+
+        } 
     }
     }
     // https://github.com/rohitchawla28/LactoseIntolerant_/blob/master/ftc_app-master/TeamCode/src/main/java/LactoseIntolerant/Motion.java
