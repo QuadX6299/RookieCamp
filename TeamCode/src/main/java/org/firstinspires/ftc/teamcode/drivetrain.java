@@ -162,4 +162,63 @@ public class drivetrain {
 
     }
 
+    public void goStraight(double distance, double kP, double kI, double kD, double timeout, double max) {
+        ElapsedTime timer = new ElapsedTime();
+        resetEncoders();
+        timer.startTime();
+
+        double oldGyro = gyro.getGyroYaw();
+        double power;
+        double error = 0;
+        double currTime = timer.milliseconds();
+        double LhAdjust = 0;
+        double RhAdjust = 0;
+        double integral = 0;
+        double derivative;
+        double proportional;
+        double oldTime = currTime;
+
+
+        while (Math.abs(distance) > Math.abs(getAvgEncoder()) && !newOp.isStopRequested()) {
+            currTime = timer.milliseconds();
+
+            proportional = (distance - getAvgEncoder()) * kP;
+            integral += (distance - getAvgEncoder()) * (currTime - oldTime) * kI;
+            derivative = sensors.getTrueDiff(oldGyro) * kD;
+            power = integral + proportional + derivative;
+
+            error = sensors.getCurrGyro() - oldGyro;
+
+            RhAdjust = -(error * .028);
+            LhAdjust = (error * .028);
+
+            if(power < 0.15 && distance > 0){
+                power = 0.15;
+            }
+            if(power > -0.15 && distance < 0){
+                power = -0.15;
+            }
+
+            if(Math.abs(power) > Math.abs(max)){
+                power = max;
+            }
+            oldTime = currTime;
+            straight(power + LhAdjust, power + RhAdjust);
+
+            newOp.telemetry.addData("Avg Encoder Val", getAvgEncoder());
+            newOp.telemetry.addData("Gyro Error", error);
+            newOp.telemetry.addData("Forward power", power);
+            newOp.telemetry.addData("Integral", integral);
+            newOp.telemetry.addData("Left power: ", LhAdjust);
+            newOp.telemetry.addData("Right power: ", RhAdjust);
+            newOp.telemetry.update();
+            if (currTime > timeout) {
+                break;
+            }
+        }
+
+        stopMotors();
+    }
+
+
 }
