@@ -59,6 +59,13 @@ public class drivetrain {
     }
 
     public void setPower(double LPower, double RPower) {
+        double max = Math.max(Math.abs(LPower), Math.abs(Rpower));
+
+        if(max > 1){
+            LPower /= max;
+            RPower /=max;
+        }
+
         frontLeft.setPower(LPower);
         backLeft.setPower(LPower);
         frontRight.setPower(RPower);
@@ -95,19 +102,19 @@ public class drivetrain {
 
         double avgAdd = Math.abs(frontLeft.getCurrentPosition()) + Math.abs(backLeft.getCurrentPosition()) + Math.abs(frontRight.getCurrentPosition()) + Math.abs(backRight.getCurrentPosition());
         double div = 4.0;
-        if(frontLeft.getCurrentPosition() == 0;){
+        if(frontLeft.getCurrentPosition() == 0){
             div --;
         }
-        if(backLeft.getCurrentPosition() == 0;){
+        if(backLeft.getCurrentPosition() == 0){
             div --;
         }
-        if(frontRight.getCurrentPosition() == 0;){
+        if(frontRight.getCurrentPosition() == 0){
             div --;
         }
-        if(backRight.getCurrentPosition() == 0;){
+        if(backRight.getCurrentPosition() == 0){
             div --;
         }
-        if(div == 0;){
+        if(div == 0){
             return 0;
         } else{
             return avgAdd / div;
