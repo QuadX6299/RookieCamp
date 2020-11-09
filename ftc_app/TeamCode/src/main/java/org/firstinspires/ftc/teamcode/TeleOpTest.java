@@ -61,7 +61,7 @@ public class TeleOpTest extends OpMode
     private DcMotor bl;
     private DcMotor br;
     private output shoot;
-    private input intake;
+    private transition intake;
     private boolean shootSwitch;
 
     /*
@@ -80,7 +80,7 @@ public class TeleOpTest extends OpMode
         br = hardwareMap.dcMotor.get("br");
 
         shoot = new output(hardwareMap);
-        intake = new input(hardwareMap);
+        intake = new transition(hardwareMap);
 
         //actuator = hardwareMap.dcMotor.get("actuator");
         //output = hardwareMap.dcMotor.get("output");
