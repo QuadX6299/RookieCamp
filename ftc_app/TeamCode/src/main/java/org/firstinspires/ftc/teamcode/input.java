@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-public class input {
+public class transition {
 
     LinearOpMode opMode;
     public DcMotor intake;
@@ -20,7 +20,7 @@ public class input {
     HardwareMap hardwareMap;
 
 
-    public input(HardwareMap hwmap) {
+    public transition(HardwareMap hwmap) {
         HardwareMap hardwareMap  = hwmap;
         intake = hardwareMap.get(DcMotor.class, "input");
 
@@ -41,39 +41,6 @@ public class input {
     public void stop() {
         intake.setPower(0);
     }
-
-    public void shootSpeed(float bumper) {
-//        timer = new ElapsedTime;
-//        timer.start();
-        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        double shootPower = 0;
-        double error = 0;
-        double time = 1;
-        double change = 1;
-        double proportional = 0;
-        double integral;
-        int oldTime = 0;
-        int currTime = 0;
-        int oldEncode = 0;
-
-        while (Math.abs(bumper) != 0) {
-//            currTime = timer.milliseconds();
-//            //one rev is 28 tics
-//            //circumfrence - tics to do one rev / rev
-//            // power set to one not = one
-//            //fix power - time to one rotation
-//            oldEncode = wheelShoot.getCurrentPosition();
-//            //error = (28/(wheelShoot.getCurrEncoder() - oldEncode)) / (time/currTime-oldTime);
-//            error = (wheelShoot.getCurrentPosition() - oldEncode)/(time/currTime-oldTime);
-//            proportional = error*kp;
-//            shootPower = proportional+integral;
-//            oldTime = currTime;
-//
-//            shoot(shootPower);
-
-            intake.setPower(0.7);
-        }
 
         stop();
 
