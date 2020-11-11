@@ -29,10 +29,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -60,6 +62,10 @@ public class TeleOpTest extends OpMode
     private DcMotor fr;
     private DcMotor bl;
     private DcMotor br;
+    private DcMotor vacuum;
+    private DcMotor vacuum2;
+    private Servo wobble;
+    private Servo claw;
     private output shoot;
     private transition intake;
     private boolean shootSwitch;
@@ -78,6 +84,10 @@ public class TeleOpTest extends OpMode
         fr = hardwareMap.dcMotor.get("fr");
         bl = hardwareMap.dcMotor.get("bl");
         br = hardwareMap.dcMotor.get("br");
+        wobble = hardwareMap.servo.get("wobble");
+        claw = hardwareMap.servo.get("claw");
+        vacuum = hardwareMap.dcMotor.get("intake");
+        vacuum2 = hardwareMap.dcMotor.get("intake2");
 
         shoot = new output(hardwareMap);
         intake = new transition(hardwareMap);
@@ -89,6 +99,8 @@ public class TeleOpTest extends OpMode
         fr.setDirection(DcMotor.Direction.FORWARD);
         bl.setDirection(DcMotor.Direction.FORWARD);
         br.setDirection(DcMotor.Direction.FORWARD);
+        vacuum.setDirection(DcMotor.Direction.FORWARD);
+        vacuum2.setDirection(DcMotor.Direction.REVERSE);
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -127,24 +139,11 @@ public class TeleOpTest extends OpMode
         leftPower = Range.clip(drive + turn, -1.0, 1.0);
         rightPower = Range.clip(drive - turn, -1.0, 1.0);
 
-        // Tank Mode uses one stick to control each wheel.
-        // - This requires no math, but it is hard to drive forward slowly and keep straight.
-        // leftPower  = -gamepad1.left_stick_y ;
-        // rightPower = -gamepad1.right_stick_y ;
-
         // Send calculated power to wheels
         fl.setPower(leftPower);
         bl.setPower(leftPower);
         fr.setPower(rightPower);
         br.setPower(rightPower);
-
-        // if (gamepad1.left_bumper) {
-        //     shootSwitch = true;
-        // }
-
-        // if (gamepad1.left_bumper){
-        //     shootSwitch = false;
-        // }
 
         shoot.wheelShoot.setPower(gamepad1.right_trigger);
 
@@ -153,11 +152,28 @@ public class TeleOpTest extends OpMode
         } else if(gamepad1.b){
             intake.intake.setPower(0.6);
         } else if(gamepad1.x){
-            intake.intake.setPower(0.74);
+            intake.intake.setPower(0.73);
         } else if(gamepad1.y){
-            intake.intake.setPower(0.75);
+            intake.intake.setPower(0.72);
         } else{
             intake.intake.setPower(0);
+        }
+
+        vacuum.setPower(gamepad1.left_trigger);
+        vacuum2.setPower(gamepad1.left_trigger);
+
+        if(gamepad1.dpad_down) {
+            wobble.setPosition(0);
+
+        }else if(gamepad1.dpad_up){
+            wobble.setPosition(1);
+
+        }
+
+        if(gamepad1.dpad_left) {
+            claw.setPosition(0);
+        } else if(gamepad1.dpad_right){
+            claw.setPosition(1);
         }
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
