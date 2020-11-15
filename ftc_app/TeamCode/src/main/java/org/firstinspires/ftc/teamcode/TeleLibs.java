@@ -1,97 +1,124 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 public abstract class TeleLibs extends OpMode {
 
-    private DcMotor frontLeft;
-    private DcMotor backLeft;
-    private DcMotor frontRight;
-    private DcMotor backRight;
+    private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor fl;
+    private DcMotor fr;
+    private DcMotor bl;
+    private DcMotor br;
+    private DcMotor intake;
+    private DcMotor intake2;
+    private DcMotor transition;
+    private DcMotor shooter;
+    private Servo wobble;
+    private Servo claw;
+    private Servo gate;
 
-    private DcMotor intakeFL;
-    private DcMotor intakeBR;
-
+    private boolean shootSwitch;
     @Override
     public void init() {
         // MOTOR INITIALZATION
-        frontLeft = hardwareMap.dcMotor.get("frontLeft");
-        backLeft = hardwareMap.dcMotor.get("backLeft");
-        frontRight = hardwareMap.dcMotor.get("frontRight");
-        backRight = hardwareMap.dcMotor.get("backRight");
+        fl = hardwareMap.dcMotor.get("fl");
+        fr = hardwareMap.dcMotor.get("fr");
+        bl = hardwareMap.dcMotor.get("bl");
+        br = hardwareMap.dcMotor.get("br");
+        wobble = hardwareMap.servo.get("wobble");
+        claw = hardwareMap.servo.get("claw");
+        gate = hardwareMap.servo.get("gate");
+        intake = hardwareMap.dcMotor.get("vacuum");
+        intake2 = hardwareMap.dcMotor.get("vacuum2");
+       transition = hardwareMap.dcMotor.get("shooter");
+        shooter = hardwareMap.dcMotor.get("input");
 
-        intakeFL = hardwareMap.dcMotor.get("intakeFL");
-        intakeBR = hardwareMap.dcMotor.get("intakeBR");
-        
-    // ________________________________________________________________________________________________
-        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        //actuator = hardwareMap.dcMotor.get("actuator");
+        //output = hardwareMap.dcMotor.get("output");
 
-        intakeFL.setDirection(DcMotorSimple.Direction.FORWARD);
-        intakeBR.setDirection(DcMotorSimple.Direction.REVERSE);
+        fl.setDirection(DcMotor.Direction.FORWARD);
+        fr.setDirection(DcMotor.Direction.FORWARD);
+        bl.setDirection(DcMotor.Direction.FORWARD);
+        br.setDirection(DcMotor.Direction.FORWARD);
+        intake.setDirection(DcMotor.Direction.FORWARD);
+        intake2.setDirection(DcMotor.Direction.REVERSE);
+        // Tell the driver that initialization is complete.
+        telemetry.addData("Status", "Initialized");
     }
 
 
 
 
         // =======================================  DRIVE  =============================================
-   
-    public void arcadeDrive() {
-        //checking for valid range to apply power (has to give greater power than .1)
-        if ((Math.abs(gamepad1.left_stick_y) > .1) ||
-                Math.abs(gamepad1.right_stick_x) > .1) {
 
-            if (Math.abs(left_stick_y > .1)){
-                frontLeft.setPower(-gamepad1.left_stick_y);
-                frontRight.setPower(-gamepad1.left_stick_y);
-                backLeft.setPower(-gamepad1.left_stick_y);
-                backRight.setPower(-gamepad1.left_stick_y); 
-            }
-            else {
-                frontLeft.setPower(gamepad1.right_stick_x);
-                frontRight.setPower(-gamepad1.right_stick_x);
-                backLeft.setPower(gamepad1.right_stick_x);
-                backRight.setPower(-gamepad1.right_stick_x);
-            }
+    public void Drive() {
+        double leftPower;
+        double rightPower;
 
-        }
-        else {
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
+        // Choose to drive using either Tank Mode, or POV Mode
+        // Comment out the method that's not used.  The default below is POV.
 
-        }
+        // POV Mode uses left stick to go forward, and right stick to turn.
+        // - This uses basic math to combine motions and is easier to drive straight.
+        double drive = -gamepad1.left_stick_y;
+        double turn = gamepad1.right_stick_x;
+        leftPower = Range.clip(drive + turn, -1.0, 1.0);
+        rightPower = Range.clip(drive - turn, -1.0, 1.0);
 
+        // Send calculated power to wheels
+        fl.setPower(leftPower);
+        bl.setPower(leftPower);
+        fr.setPower(rightPower);
+        br.setPower(rightPower);
     }
 
-    // =======================================  INTAKE  ============================================
+    // =======================================  SHOOTER  ============================================
 
-    public void intakeSlides() {
-        double left_trigger = gamepad1.left_trigger;
-        double right_trigger = gamepad1.right_trigger;
+    public void shooter() {
+        if(gamepad1.a) {
+            shooter.setPower(0.5);
+        } else if(gamepad1.b){
+            shooter.setPower(0.6);
+        } else if(gamepad1.x){
+            shooter.setPower(0.73);
+        } else if(gamepad1.y){
+            shooter.setPower(0.72);
+        } else{
+            shooter.setPower(0);
+        }
+    }
 
-        if (left_trigger > 0.05) {
-            //the right intake slide is set to reverse, may have to change that
-            intakeFL.setPower(-left_trigger);
-            intakeBR.setPower(-left_trigger);
+    // ====================================== INTAKE =============================================
+    public void intake () {
+        intake.setPower(gamepad1.left_trigger);
+        intake2.setPower(gamepad1.left_trigger);
+    }
+    // ======================================= TRANSITION =========================================
+    public void transition(){
+        transition.setPower(gamepad1.right_trigger);
+    }
+    // ====================================== wobble goal pick up =================================
+    public void wobble(){
+        if(gamepad1.dpad_down) {
+            gate.setPosition(0);
+
+        }else if(gamepad1.dpad_up){
+            gate.setPosition(1);
 
         }
-        else if (right_trigger > 0.05) {
-            intakeFL.setPower(right_trigger);
-            intakeBR.setPower(right_trigger);
 
+        if(gamepad1.dpad_left) {
+            claw.setPosition(0);
+        } else if(gamepad1.dpad_right){
+            claw.setPosition(1);
         }
-        else {
-            intakeFL.setPower(0);
-            intakeBR.setPower(0);
-
-        } 
     }
-    }
+}
     // https://github.com/rohitchawla28/LactoseIntolerant_/blob/master/ftc_app-master/TeamCode/src/main/java/LactoseIntolerant/Motion.java
